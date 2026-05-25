@@ -1,0 +1,60 @@
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class MessageAppTest {
+
+    @Test
+    void testValidRecipientCell() {
+        Message msg = new Message("+27821234567", "Hello");
+        assertTrue(msg.checkRecipientCell());
+    }
+
+    @Test
+    void testInvalidRecipientCell_NoPlus27() {
+        Message msg = new Message("0821234567", "Hello");
+        assertFalse(msg.checkRecipientCell());
+    }
+
+    @Test
+    void testInvalidRecipientCell_TooShort() {
+        Message msg = new Message("+2782123456", "Hello");
+        assertFalse(msg.checkRecipientCell());
+    }
+
+    @Test
+    void testInvalidRecipientCell_TooLong() {
+        Message msg = new Message("+278212345678", "Hello");
+        assertFalse(msg.checkRecipientCell());
+    }
+
+    @Test
+    void testMessageLength_Valid() {
+        Message msg = new Message("+27821234567", "This is a valid message");
+        // FIXED: Changed msg.content.length() to msg.getMessageContent().length()
+        assertTrue(msg.getMessageContent().length() <= 250);
+    }
+
+    @Test
+    void testMessageLength_TooLong() {
+        String longText = "a".repeat(251);
+        Message msg = new Message("+27821234567", longText);
+        // FIXED: Changed msg.content.length() to msg.getMessageContent().length()
+        assertTrue(msg.getMessageContent().length() > 250);
+    }
+
+    @Test
+    void testSentMessage_ReturnsCorrectString() {
+        Message msg = new Message("+27821234567", "Hi there");
+        String result = msg.sentMessage();
+        assertTrue(result.contains("Message sent"));
+        assertTrue(result.contains("+27821234567"));
+    }
+
+    @Test
+    void testPrintMessages_ContainsDetails() {
+        Message msg = new Message("+27821234567", "Test message");
+        String output = msg.printMessages();
+        assertTrue(output.contains("To: +27821234567"));
+        assertTrue(output.contains("Message: Test message"));
+    }
+}
